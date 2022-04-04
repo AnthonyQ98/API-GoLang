@@ -23,8 +23,20 @@ func getPhones(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, phones)
 }
 
+func createPhone(c *gin.Context) {
+	var newPhone phone
+
+	if err := c.BindJSON(&newPhone); err != nil {
+		return 
+	}
+
+	phones = append(phones, newPhone)
+	c.IndentedJSON(http.StatusCreated, newPhone)
+}
+
 func main(){
 	router := gin.Default()
 	router.GET("/phones", getPhones)
+	router.POST("/phones", createPhone)
 	router.Run("localhost:8080")
 }

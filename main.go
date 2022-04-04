@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"errors"
+	//"errors"
 )
 
 type phone struct{
@@ -19,6 +19,12 @@ var phones = []phone{
 	{ID: "3", Model: "iPhone X", Year: "2017", Quantity: 2},
 }
 
+func getPhones(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, phones)
+}
+
 func main(){
-	
+	router := gin.Default()
+	router.GET("/phones", getPhones)
+	router.Run("localhost:8080")
 }

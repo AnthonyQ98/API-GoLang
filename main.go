@@ -24,9 +24,58 @@ func phoneById(c *gin.Context) {
 	phone, err := getPhoneById(id)
 
 	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Phone not found."})
 		return
 	}
 
+	c.IndentedJSON(http.StatusOK, phone)
+}
+
+func checkoutPhone(c *gin.Context) {
+	id, ok := c.GetQuery("id")
+
+	if !ok {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"Message": "Missing id query paramater"})
+		return
+	}
+
+	phone, err := getPhoneById(id)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"Message": "Phone not found"})
+		return
+	}
+
+	if phone.Quantity <= 0 {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"Message": "Phone not available."})
+		return
+	}
+
+	phone.Quantity -= 1
+	c.IndentedJSON(http.StatusOK, phone)
+}
+
+func returnPhone(c *gin.Context) {
+	id, ok := c.GetQuery("id")
+
+	if !ok {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"Message": "Missing id query paramater"})
+		return
+	}
+
+	phone, err := getPhoneById(id)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"Message": "Phone not found"})
+		return
+	}
+
+	if phone.Quantity <= 0 {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"Message": "Phone not available."})
+		return
+	}
+
+	phone.Quantity += 1
 	c.IndentedJSON(http.StatusOK, phone)
 }
 
@@ -61,5 +110,7 @@ func main(){
 	router.GET("/phones", getPhones)
 	router.GET("/phones/:id", phoneById)
 	router.POST("/phones", createPhone)
+	router.PATCH("/checkout", checkoutPhone)
+	router.PATCH("/return", returnPhone)
 	router.Run("localhost:8080")
 }

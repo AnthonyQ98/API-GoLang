@@ -1,9 +1,11 @@
 package main
 
 import (
-	"net/http"
-	"github.com/gin-gonic/gin"
 	"errors"
+	"fmt"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type phone struct{
@@ -106,11 +108,12 @@ func createPhone(c *gin.Context) {
 }
 
 func main(){
+	fmt.Printf("Starting application....\n")
 	router := gin.Default()
 	router.GET("/phones", getPhones)
 	router.GET("/phones/:id", phoneById)
 	router.POST("/phones", createPhone)
 	router.PATCH("/checkout", checkoutPhone)
 	router.PATCH("/return", returnPhone)
-	router.Run("localhost:8080")
+	router.Run("0.0.0.0:8080")
 }
